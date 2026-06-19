@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanley Zhang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            border: none;
+            outline: none;
+        }
+
+        :root {
+            --bg:        #0D0F0E;
+            --surface:   #141715;
+            --card:      #1A1D1B;
+            --border:    #2A2E2C;
+            --border-hi: #3A3F3D;
+            --text:      #E8E4DC;
+            --muted:     #8A8E8C;
+            --green:     #4AFC8A;
+            --green-dim: #1F3D2A;
+        }
+
+        html { font-size: 62.5%; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+
+        /* ── HEADER ── */
+        header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            padding: 1.6rem 8%;
+            background-color: rgba(13,15,14,0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            color: var(--green);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+
+        .logo::before { content: "> "; color: var(--muted); }
+
+        nav a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            color: var(--muted);
+            margin-left: 3.2rem;
+            font-weight: 400;
+            transition: color 0.2s ease;
+            letter-spacing: 0.05em;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--green);
+        }
+
+        nav a.active::before { content: "./"; }
+
+        /* ── SECTIONS ── */
+        section {
+            padding: 8rem 8%;
+        }
+
+        /* ── HOME ── */
+        .home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            gap: 6rem;
+            padding-top: 10rem;
+        }
+
+        .home-content {
+            flex: 1;
+        }
+
+        .prompt-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+        }
+
+        .prompt-line span { color: var(--green); }
+
+        .home-content h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 5.6rem;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+        }
+
+        .home-content h1 em {
+            font-style: normal;
+            color: var(--green);
+        }
+
+        .typing-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            height: 2.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .typing-line .prefix { color: var(--green); }
+
+        #typed-text { color: var(--text); }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.8rem;
+            background-color: var(--green);
+            animation: blink 0.75s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .home-content p {
+            font-size: 1.6rem;
+            color: var(--muted);
+            line-height: 1.8;
+            max-width: 58rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .home-actions {
+            display: flex;
+            gap: 1.6rem;
+            margin-top: 3.2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            display: inline-block;
+            padding: 1.1rem 2.4rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--green);
+            color: var(--bg);
+            border: 1px solid var(--green);
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--green);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid var(--border-hi);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .home-img {
+            flex-shrink: 0;
+        }
+
+        .home-img img {
+            width: 28rem;
+            height: 28rem;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            filter: grayscale(20%);
+            transition: filter 0.3s ease, border-color 0.3s ease;
+        }
+
+        .home-img img:hover {
+            filter: grayscale(0%);
+            border-color: var(--green);
+        }
+
+        /* ── TERMINAL CARD (about blurb) ── */
+        .terminal-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0.8rem;
+            margin-top: 3.2rem;
+            overflow: hidden;
+            max-width: 58rem;
+        }
+
+        .terminal-bar {
+            background-color: var(--card);
+            padding: 1rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dot {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 50%;
+        }
+
+        .dot-r { background-color: #FF5F57; }
+        .dot-y { background-color: #FEBC2E; }
+        .dot-g { background-color: #28C840; }
+
+        .terminal-bar span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .terminal-body {
+            padding: 2rem 2.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            line-height: 1.9;
+            color: var(--muted);
+        }
+
+        .terminal-body .cmd { color: var(--green); }
+        .terminal-body .val { color: var(--text); }
+        .terminal-body .comment { color: #4A5450; }
+
+        /* ── SECTION HEADING ── */
+        .section-heading {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            color: var(--muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+
+        .section-heading::before { content: "// "; color: var(--green); }
+
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 5rem;
+            letter-spacing: -0.02em;
+        }
+
+        /* ── PROJECTS ── */
+        .projects { background-color: var(--bg); }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(32rem, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.8rem;
+            padding: 2.8rem;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--green);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--border-hi);
+            transform: translateY(-3px);
+        }
+
+        .project-card:hover::before { opacity: 1; }
+
+        .project-card.wip { opacity: 0.5; }
+        .project-card.wip:hover { opacity: 0.7; }
+
+        .project-icon {
+            font-size: 2.4rem;
+            color: var(--green);
+            margin-bottom: 1.6rem;
+        }
+
+        .project-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--green);
+            background-color: var(--green-dim);
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .project-wip-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--muted);
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .project-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .project-card h3 a {
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        .project-card h3 a:hover { color: var(--green); }
+
+        .project-card p {
+            font-size: 1.45rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .project-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .project-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--muted);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .project-links a:hover { color: var(--green); }
+
+        /* ── TIMELINE ── */
+        .experience { background-color: var(--surface); }
+
+        .timeline {
+            position: relative;
+            max-width: 80rem;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 1.6rem;
+            top: 0.8rem;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--green), var(--border));
+        }
+
+        .timeline-entry {
+            padding-left: 5.6rem;
+            padding-bottom: 4rem;
+            position: relative;
+        }
+
+        .timeline-entry:last-child { padding-bottom: 0; }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0.7rem;
+            top: 0.6rem;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            background-color: var(--bg);
+            border: 2px solid var(--green);
+        }
+
+        .timeline-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--green);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-entry h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline-entry .org {
+            font-size: 1.35rem;
+            color: var(--muted);
+            margin-bottom: 1.2rem;
+        }
+
+        .timeline-entry ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .timeline-entry ul li {
+            font-size: 1.45rem;
+            color: var(--muted);
+            line-height: 1.7;
+            padding-left: 1.6rem;
+            position: relative;
+            margin-bottom: 0.6rem;
+        }
+
+        .timeline-entry ul li::before {
+            content: "›";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+        }
+
+        /* ── SKILLS ── */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .skill-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            padding: 0.6rem 1.4rem;
+            border: 1px solid var(--border);
+            border-radius: 0.4rem;
+            color: var(--muted);
+            background-color: var(--card);
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .skill-chip:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* ── CONTACT ── */
+        .contact { background-color: var(--bg); }
+
+        .contact-inner {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 6rem;
+            max-width: 96rem;
+        }
+
+        .contact-info h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.6rem;
+        }
+
+        .contact-info p {
+            font-size: 1.6rem;
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 3.2rem;
+        }
+
+        .contact-links { display: flex; flex-direction: column; gap: 1.4rem; }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            color: var(--muted);
+            transition: color 0.2s ease;
+        }
+
+        .contact-link:hover { color: var(--green); }
+
+        .contact-link i { font-size: 1.8rem; }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.6rem;
+            padding: 1.4rem 1.8rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            transition: border-color 0.2s ease;
+            resize: vertical;
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder { color: var(--muted); }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus { border-color: var(--green); }
+
+        .contact-form textarea { min-height: 15rem; }
+
+        /* ── FOOTER ── */
+        footer {
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 3.2rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            color: var(--muted);
+        }
+
+        .footer-logo span { color: var(--green); }
+
+        .footer-socials { display: flex; gap: 1.6rem; }
+
+        .footer-socials a {
+            font-size: 1.8rem;
+            color: var(--muted);
+            width: 3.8rem;
+            height: 3.8rem;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .footer-socials a:hover {
+            color: var(--green);
+            border-color: var(--green);
+        }
+
+        .footer-copy {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--muted);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .home { flex-direction: column; text-align: center; padding-top: 8rem; }
+            .home-img img { width: 20rem; height: 20rem; }
+            .terminal-card { max-width: 100%; }
+            .home-actions { justify-content: center; }
+            .home-content p { margin: 0 auto 1.6rem; }
+            .contact-inner { grid-template-columns: 1fr; gap: 4rem; }
+        }
+
+        @media (max-width: 600px) {
+            .section-title { font-size: 3rem; }
+            .home-content h1 { font-size: 4rem; }
+            .form-row { grid-template-columns: 1fr; }
+            header { padding: 1.4rem 5%; }
+            section { padding: 6rem 5%; }
+            nav a { margin-left: 2rem; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <a href="index_redesign.html" class="logo">stanley_zhang</a>
+        <nav id="navbar">
+            <a href="#" class="active">home</a>
+            <a href="#projects">projects</a>
+            <a href="#experience">exp/edu</a>
+            <a href="#contact">contact</a>
+        </nav>
+    </header>
+
+    <!-- HOME -->
+    <section class="home">
+        <div class="home-content">
+            <p class="prompt-line"><span>~/stanley</span> $</p>
+            <h1>Stanley<br><em>Zhang.</em></h1>
+            <div class="typing-line">
+                <span class="prefix">></span>
+                <span id="typed-text"></span>
+                <span class="cursor"></span>
+            </div>
+            <p>CIS student at Baruch College with a Cybersecurity concentration. Security+ certified. On track for cloud security and red team roles, while building things in between.</p>
+            <p>Outside of tech: traditional art, cooking, gym, and too many hours on the games.</p>
+
+            <div class="home-actions">
+                <a href="#projects" class="btn btn-primary">./projects</a>
+                <a href="#contact" class="btn btn-secondary">contact me</a>
+            </div>
+
+            <div class="terminal-card">
+                <div class="terminal-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                    <span>whoami.sh</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="cmd">const</span> <span class="val">stanley</span> = {</div>
+                    <div>&nbsp; school: <span class="val">"Baruch College — BBA CIS"</span>,</div>
+                    <div>&nbsp; cert:   <span class="val">"CompTIA Security+"</span>,</div>
+                    <div>&nbsp; focus:  <span class="val">["Cloud Security", "Pen Testing"]</span>,</div>
+                    <div>&nbsp; currently: <span class="val">"TTPR Cohort 2 - Cybersecurity"</span>,</div>
+                    <div>&nbsp; <span class="comment">// also: ISACA Club, T-Howard Finalist, CUNY 2X</span></div>
+                    <div>};</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-img">
+            <img src="tuff ahh img.png" alt="Stanley Zhang">
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+        <p class="section-heading">work</p>
+        <h2 class="section-title">Projects</h2>
+
+        <div class="projects-grid">
+
+            <div class="project-card">
+                <div class="project-tag">live</div>
+                <h3>Portfolio Website</h3>
+                <p>The site you're on. Built from scratch with HTML5 and CSS including the structure, style, and layout all custom.</p>
+                <div class="project-links">
+                    <span><i class="fa-brands fa-html5"></i> HTML / CSS</span>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-tag">python</div>
+                <h3><a href="https://github.com/stanzhan-dev/Password-Strength-Checker-Manager" target="_blank">Password Manager</a></h3>
+                <p>Python GUI app that evaluates password strength, generates secure passwords, and tracks your last 5 with masking.</p>
+                <div class="project-links">
+                    <a href="https://github.com/stanzhan-dev/Password-Strength-Checker-Manager" target="_blank">
+                        <i class="fa-brands fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-tag">ctf</div>
+                <h3><a href="https://stanzhan-dev.github.io/PicoCTF-Challenges-Website/" target="_blank">PicoCTF Writeups</a></h3>
+                <p>Documented journey through picoCTF, challenge solutions, notes, and writeups covering crypto, forensics, pwn, and more.</p>
+                <div class="project-links">
+                    <a href="https://github.com/stanzhan-dev/PicoCTF-Challenges" target="_blank">
+                        <i class="fa-brands fa-github"></i> Repo
+                    </a>
+                    <a href="https://stanzhan-dev.github.io/PicoCTF-Challenges-Website/" target="_blank">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Site
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-card wip">
+                <div class="project-wip-tag">in progress</div>
+                <h3>Music Playlist App</h3>
+                <p>Personal playlist manager with Spotify + YouTube integration. Currently in early planning.</p>
+            </div>
+
+            <div class="project-card wip">
+                <div class="project-wip-tag">in progress</div>
+                <h3>Cybersecurity Projects</h3>
+                <p>More hands-on security work coming — tools, research, and write-ups in the pipeline.</p>
+            </div>
+
+            <div class="project-card wip">
+                <div class="project-wip-tag">in progress</div>
+                <h3>Game Dev</h3>
+                <p>Want to build a game. Genre TBD, ambition is high, time is finite.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- EXPERIENCE & EDUCATION -->
+    <section class="experience" id="experience">
+        <p class="section-heading">history</p>
+        <h2 class="section-title">Exp / Edu</h2>
+
+        <div class="timeline">
+            
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">Mar 2026 – Present</div>
+                <h3>TTPR Cohort 2 - Cybersecurity</h3>
+                <div class="org">NYC Tech Talent Pipeline Residency</div>
+                <ul>
+                    <li>10-week intensive tech bootcamp focused on applied technical and professional skills.</li>
+                    <li>Active in ISACA Cybersecurity Club, CUNY 2X, and AIS at Baruch.</li>
+                </ul>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">Jan 2026 – Jun 2026</div>
+                <h3>IT Helpdesk Support</h3>
+                <div class="org">NYC Parks Department</div>
+                <ul>
+                    <li>Supported end-user devices using IGEL, Nerdio, and Active Directory.</li>
+                    <li>Managed MFA provisioning and SharePoint access control workflows.</li>
+                    <li>Resolved hardware/software tickets and assisted staff with technical onboarding.</li>
+                </ul>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">2024 — Brooklyn Public Library</div>
+                <h3>Teen Techie (IT Assistant)</h3>
+                <div class="org">Brooklyn Public Library</div>
+                <ul>
+                    <li>Diagnosed and resolved technical issues: black screens, printer failures, network connectivity.</li>
+                    <li>Assisted patrons with Microsoft Office and the library's online catalog system.</li>
+                </ul>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">2024 — SYEP</div>
+                <h3>Green Data Analyst</h3>
+                <div class="org">Infinity Educational Programs</div>
+                <ul>
+                    <li>Compiled experiment findings into comprehensive reports with trend analysis.</li>
+                    <li>Used data visualization to communicate complex scientific results to stakeholders.</li>
+                </ul>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">Enrolled 2023 — Expected Spring 2027</div>
+                <h3>BBA in Computer Information Systems</h3>
+                <div class="org">Baruch College — Cybersecurity Concentration</div>
+                <ul>
+                    <li>CompTIA Security+ certified.</li>
+                    <li>T-Howard Foundation Finalist.</li>
+                </ul>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-dot"></div>
+                <div class="timeline-meta">Graduated 2023</div>
+                <h3>Millennium High School</h3>
+                <div class="org">Millennium Diploma — AP Calculus BC</div>
+            </div>
+
+        </div>
+
+        <!-- Skills -->
+        <p class="section-heading" style="margin-top: 7rem;">tools & tech</p>
+        <div class="skills-grid">
+            <span class="skill-chip">Python</span>
+            <span class="skill-chip">HTML / CSS</span>
+            <span class="skill-chip">Active Directory</span>
+            <span class="skill-chip">MFA</span>
+            <span class="skill-chip">IGEL</span>
+            <span class="skill-chip">Nerdio</span>
+            <span class="skill-chip">SharePoint</span>
+            <span class="skill-chip">AMPS</span>
+            <span class="skill-chip">CompTIA Security+</span>
+            <span class="skill-chip">CTF / picoCTF</span>
+            <span class="skill-chip">Git / GitHub</span>
+            <span class="skill-chip">Linux</span>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <p class="section-heading">reach out</p>
+        <h2 class="section-title">Contact</h2>
+
+        <div class="contact-inner">
+            <div class="contact-info">
+                <h2>Let's talk.</h2>
+                <p>Whether it's a project, an opportunity, or just a cool cybersecurity conversation — my inbox is open.</p>
+                <div class="contact-links">
+                    <a href="https://www.linkedin.com/in/stanley-zhang1/" class="contact-link" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i> linkedin.com/in/stanley-zhang1
+                    </a>
+                    <a href="https://github.com/stanzhan-dev" class="contact-link" target="_blank">
+                        <i class="fa-brands fa-github"></i> github.com/stanzhan-dev
+                    </a>
+                </div>
+            </div>
+
+            <form class="contact-form" action="https://formspree.io/f/mpwdqrvw" method="post">
+                <div class="form-row">
+                    <input type="text" name="full-name" placeholder="Full Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <input type="text" name="subject" placeholder="Subject" required>
+                <textarea name="message" placeholder="Your message..."></textarea>
+                <button type="submit" class="btn btn-primary" style="align-self: flex-start;">send_message()</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">
+            <span>></span> stanley_zhang © 2026
+        </div>
+        <div class="footer-socials">
+            <a href="https://www.linkedin.com/in/stanley-zhang1/" target="_blank" aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/stanzhan-dev" target="_blank" aria-label="GitHub">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+        <div class="footer-copy">all rights reserved</div>
+    </footer>
+
+    <script>
+        const phrases = [
+            "cybersecurity major",
+            "Security+ certified",
+            "CTF challenger",
+            "cloud security track",
+            "aspiring red teamer",
+            "big fan of turtles"
+        ];
+
+        let phraseIdx = 0, charIdx = 0, deleting = false;
+        const el = document.getElementById("typed-text");
+
+        function type() {
+            const phrase = phrases[phraseIdx];
+            if (!deleting) {
+                el.textContent = phrase.slice(0, ++charIdx);
+                if (charIdx === phrase.length) {
+                    deleting = true;
+                    setTimeout(type, 2000);
+                    return;
+                }
+            } else {
+                el.textContent = phrase.slice(0, --charIdx);
+                if (charIdx === 0) {
+                    deleting = false;
+                    phraseIdx = (phraseIdx + 1) % phrases.length;
+                }
+            }
+            setTimeout(type, deleting ? 40 : 70);
+        }
+
+        type();
+    </script>
+
+</body>
+</html>
